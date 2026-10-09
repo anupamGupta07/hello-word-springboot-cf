@@ -4,12 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <!-- Spring Boot 3.1.2 is the oldest 3.x line whose Spring Framework (6.0.11) can read
-       Java 21 class files, and it still carries known CVEs in Spring and Tomcat. -->
+  <!-- Spring Boot 2.7.10 is the oldest 2.7.x release whose Spring Framework (5.3.26) can
+       read Java 21 class files; every earlier 2.7.x fails with "Unsupported class file
+       major version 65". It still carries many known CVEs in Spring and Tomcat. -->
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.1.2</version>
+    <version>2.7.10</version>
     <relativePath/>
   </parent>
 
@@ -22,12 +23,21 @@
   <properties>
     <java.version>21</java.version>
     <maven.compiler.release>21</maven.compiler.release>
+    <!-- Pin every Jackson module to one old release so they stay compatible with each other. -->
+    <jackson-bom.version>2.12.0</jackson-bom.version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+    <!-- Redis client for the Cloud Foundry Redis service binding. Nothing calls it, so the
+         app starts and prints hello world even when no Redis is bound. -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-redis</artifactId>
     </dependency>
 
     <!-- Deliberately old versions with recorded CVEs. They are on the classpath
@@ -41,11 +51,6 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-text</artifactId>
       <version>1.9</version>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>2.12.0</version>
     </dependency>
     <dependency>
       <groupId>commons-collections</groupId>
@@ -64,3 +69,4 @@
     </plugins>
   </build>
 </project>
+
